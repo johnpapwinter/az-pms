@@ -2,6 +2,8 @@ package com.az.azpms.service;
 
 import com.az.azpms.domain.dto.TaskBidDTO;
 import com.az.azpms.domain.enums.TaskBidStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,7 +15,7 @@ public interface TaskBidService {
 
     TaskBidDTO getTaskBidById(Long id);
 
-    List<TaskBidDTO> getAllBidsByTask(Long taskId);
+    Page<TaskBidDTO> getAllBidsByTask(Long taskId, Pageable pageable);
 
     void changeTaskBidStatus(Long id, TaskBidStatus status);
 

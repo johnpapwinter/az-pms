@@ -2,36 +2,113 @@ package com.az.azpms.service;
 
 
 import com.az.azpms.domain.dto.ProjectDTO;
+import com.az.azpms.domain.entities.Project;
 import com.az.azpms.domain.enums.ProjectStatus;
+import com.az.azpms.domain.exceptions.AzErrorMessages;
+import com.az.azpms.domain.exceptions.AzIllegalStatusChangeException;
+import com.az.azpms.domain.exceptions.AzNotFoundException;
+import com.az.azpms.domain.repository.ProjectRepository;
+import com.az.azpms.utils.Utils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
+    private final ProjectRepository projectRepository;
+    private final Utils utils;
+
+    public ProjectServiceImpl(ProjectRepository projectRepository,
+                              Utils utils) {
+        this.projectRepository = projectRepository;
+        this.utils = utils;
+    }
 
     @Override
+    @Transactional
     public void createProject(ProjectDTO dto) {
+        Project project = new Project();
+        utils.initModelMapperStrict().map(dto, project);
+        project.setStatus(ProjectStatus.OPEN);
+        project.setCreationDate(LocalDateTime.now());
+        project.setLastModificationDate(LocalDateTime.now());
 
+        projectRepository.save(project);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProjectDTO getProjectById(Long id) {
-        return null;
+        Project project = projectRepository.findById(id).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+
+        return toProjectDTO(project);
     }
 
     @Override
+    @Transactional
     public void updateProject(Long id, ProjectDTO dto) {
+        Project project = projectRepository.findById(id).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+        validateProjectStatusChange(project.getStatus(), dto.getStatus());
+        utils.initModelMapperStrict().map(dto, project);
+        project.setLastModificationDate(LocalDateTime.now());
 
+        projectRepository.save(project);
     }
 
     @Override
-    public Page<ProjectDTO> getAllProjects(int page, int size) {
-        return null;
+    @Transactional(readOnly = true)
+    public Page<ProjectDTO> getAllProjects(Pageable pageable) {
+        return projectRepository.findAll(pageable)
+                .map(this::toProjectDTO);
     }
 
     @Override
+    @Transactional
     public void changeProjectStatus(Long id, ProjectStatus status) {
+        Project project = projectRepository.findById(id).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+        validateProjectStatusChange(project.getStatus(), status);
+        project.setStatus(status);
+
+        projectRepository.save(project);
+    }
+
+    private ProjectDTO toProjectDTO(Project project) {
+        ProjectDTO dto = new ProjectDTO();
+        utils.initModelMapperStrict().map(project, dto);
+
+        return dto;
+    }
+
+    private void validateProjectStatusChange(ProjectStatus currentStatus, ProjectStatus nextStatus) {
+        if (currentStatus.equals(ProjectStatus.DELETED) || currentStatus.equals(ProjectStatus.CLOSED)) {
+            throw new AzIllegalStatusChangeException(AzErrorMessages.PROJECT_STATUS_IS_FINAL.name());
+        }
+
+        if (currentStatus.equals(ProjectStatus.OPEN) &&
+                !(nextStatus.equals(ProjectStatus.PENDING) || nextStatus.equals(ProjectStatus.DELETED))) {
+            throw new AzIllegalStatusChangeException(AzErrorMessages.PROJECT_STATUS_ILLEGAL_CHANGE.name());
+        }
+
+        if (currentStatus.equals(ProjectStatus.PENDING) &&
+                !(nextStatus.equals(ProjectStatus.COMPLETED) || nextStatus.equals(ProjectStatus.DELETED))) {
+            throw new AzIllegalStatusChangeException(AzErrorMessages.PROJECT_STATUS_ILLEGAL_CHANGE.name());
+        }
+
+        if (currentStatus.equals(ProjectStatus.COMPLETED) &&
+                !(nextStatus.equals(ProjectStatus.CLOSED) || nextStatus.equals(ProjectStatus.DELETED))) {
+            throw new AzIllegalStatusChangeException(AzErrorMessages.PROJECT_STATUS_ILLEGAL_CHANGE.name());
+        }
 
     }
+
 }

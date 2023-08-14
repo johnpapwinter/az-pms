@@ -3,6 +3,7 @@ package com.az.azpms.service;
 import com.az.azpms.domain.dto.ProjectDTO;
 import com.az.azpms.domain.enums.ProjectStatus;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ProjectService {
 
@@ -12,7 +13,7 @@ public interface ProjectService {
 
     void updateProject(Long id, ProjectDTO dto);
 
-    Page<ProjectDTO> getAllProjects(int page, int size);
+    Page<ProjectDTO> getAllProjects(Pageable pageable);
 
     void changeProjectStatus(Long id, ProjectStatus status);
 
