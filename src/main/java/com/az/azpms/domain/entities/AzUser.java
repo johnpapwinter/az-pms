@@ -45,7 +45,7 @@ public class AzUser implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status")
-    private AzUserStatus azUserStatus;
+    private AzUserStatus status;
 
 
     @Override
