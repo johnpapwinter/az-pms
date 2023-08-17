@@ -56,7 +56,11 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(id).orElseThrow(
                 () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
         );
-        validateProjectStatusChange(project.getStatus(), dto.getStatus());
+
+        if (!project.getStatus().equals(dto.getStatus())) {
+            validateProjectStatusChange(project.getStatus(), dto.getStatus());
+        }
+
         utils.initModelMapperStrict().map(dto, project);
         project.setLastModificationDate(LocalDateTime.now());
 
