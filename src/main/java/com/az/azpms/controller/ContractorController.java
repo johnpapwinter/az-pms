@@ -25,7 +25,7 @@ public class ContractorController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createContractor(ContractorDTO dto) {
+    public ResponseEntity<Void> createContractor(@RequestBody ContractorDTO dto) {
         contractorService.createContractor(dto);
 
         return ResponseEntity.ok().build();
