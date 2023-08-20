@@ -58,6 +58,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public AzUser findUserByUsername(String username) {
+        return userRepository.findAzUserByUsername(username).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+    }
+
+    @Override
     @Transactional
     public void changeUserStatus(Long id, AzUserStatus status) {
         AzUser user = userRepository.findById(id).orElseThrow(
