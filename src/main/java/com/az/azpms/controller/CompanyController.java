@@ -2,6 +2,7 @@ package com.az.azpms.controller;
 
 import com.az.azpms.domain.dto.CompanyDTO;
 import com.az.azpms.service.CompanyService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +26,15 @@ public class CompanyController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createCompany(@RequestBody CompanyDTO dto) {
+    public ResponseEntity<Void> createCompany(@RequestBody @Valid CompanyDTO dto) {
         companyService.createCompany(dto);
 
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Void> updateCompany(@PathVariable("id") Long id, @RequestBody CompanyDTO dto) {
-        companyService.updateCompany(id, dto);
+    @PutMapping("/update")
+    public ResponseEntity<Void> updateCompany(@RequestBody @Valid CompanyDTO dto) {
+        companyService.updateCompany(dto);
 
         return ResponseEntity.ok().build();
     }

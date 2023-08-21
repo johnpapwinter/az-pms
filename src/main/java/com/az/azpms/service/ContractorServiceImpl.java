@@ -3,6 +3,7 @@ package com.az.azpms.service;
 
 import com.az.azpms.domain.dto.ContractorDTO;
 import com.az.azpms.domain.entities.Contractor;
+import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.ContractorRepository;
@@ -34,6 +35,12 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     @Transactional
     public void createContractor(ContractorDTO dto) {
+        contractorRepository.findContractorByName(dto.getName()).ifPresent(
+                contractor -> {
+                    throw new AzAlreadyExistsException(AzErrorMessages.ENTITY_ALREADY_EXISTS.name());
+                }
+        );
+
         Contractor contractor = new Contractor();
         utils.initModelMapperStrict().map(dto, contractor);
 
@@ -42,8 +49,8 @@ public class ContractorServiceImpl implements ContractorService {
 
     @Override
     @Transactional
-    public void updateContractor(Long id, ContractorDTO dto) {
-        Contractor contractor = contractorRepository.findById(id).orElseThrow(
+    public void updateContractor(ContractorDTO dto) {
+        Contractor contractor = contractorRepository.findById(dto.getId()).orElseThrow(
                 () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
         );
         utils.initModelMapperStrict().map(dto, contractor);

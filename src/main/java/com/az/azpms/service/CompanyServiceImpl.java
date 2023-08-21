@@ -2,6 +2,7 @@ package com.az.azpms.service;
 
 import com.az.azpms.domain.dto.CompanyDTO;
 import com.az.azpms.domain.entities.Company;
+import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.CompanyRepository;
@@ -33,6 +34,12 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public void createCompany(CompanyDTO dto) {
+        companyRepository.findCompanyByTitle(dto.getTitle()).ifPresent(
+                company -> {
+                    throw new AzAlreadyExistsException(AzErrorMessages.ENTITY_ALREADY_EXISTS.name());
+                }
+        );
+
         Company company = new Company();
         utils.initModelMapperStrict().map(dto, company);
 
@@ -41,8 +48,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public void updateCompany(Long id, CompanyDTO dto) {
-        Company company = companyRepository.findById(id).orElseThrow(
+    public void updateCompany(CompanyDTO dto) {
+        Company company = companyRepository.findById(dto.getId()).orElseThrow(
                 () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
         );
         company.setTitle(dto.getTitle());

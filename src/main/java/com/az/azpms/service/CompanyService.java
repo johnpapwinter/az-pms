@@ -11,7 +11,7 @@ public interface CompanyService {
 
     void createCompany(CompanyDTO dto);
 
-    void updateCompany(Long id, CompanyDTO dto);
+    void updateCompany(CompanyDTO dto);
 
     CompanyDTO getCompanyById(Long id);
 }

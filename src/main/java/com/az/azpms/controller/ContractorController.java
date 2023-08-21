@@ -2,6 +2,7 @@ package com.az.azpms.controller;
 
 import com.az.azpms.domain.dto.ContractorDTO;
 import com.az.azpms.service.ContractorService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +26,15 @@ public class ContractorController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createContractor(@RequestBody ContractorDTO dto) {
+    public ResponseEntity<Void> createContractor(@RequestBody @Valid ContractorDTO dto) {
         contractorService.createContractor(dto);
 
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Void> updateContractor(@PathVariable("id") Long id, @RequestBody ContractorDTO dto) {
-        contractorService.updateContractor(id, dto);
+    @PutMapping("/update")
+    public ResponseEntity<Void> updateContractor(@RequestBody @Valid ContractorDTO dto) {
+        contractorService.updateContractor(dto);
 
         return ResponseEntity.ok().build();
     }

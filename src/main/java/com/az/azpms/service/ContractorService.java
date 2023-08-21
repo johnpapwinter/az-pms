@@ -10,7 +10,7 @@ public interface ContractorService {
 
     void createContractor(ContractorDTO dto);
 
-    void updateContractor(Long id, ContractorDTO dto);
+    void updateContractor(ContractorDTO dto);
 
     ContractorDTO getContractorById(Long id);
 

@@ -22,4 +22,11 @@ public class AzExceptionHandler {
         return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(AzAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAlreadyFoundException(AzAlreadyExistsException e) {
+        ErrorResponseDTO responseDTO = new ErrorResponseDTO(e.getMessage());
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+    }
+
 }
