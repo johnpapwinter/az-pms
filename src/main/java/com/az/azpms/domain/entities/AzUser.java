@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -46,6 +48,13 @@ public class AzUser implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status")
     private AzUserStatus status;
+
+    @ManyToMany
+    @JoinTable(
+            name = "roles_per_user",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles = new ArrayList<>();
 
 
     @Override
