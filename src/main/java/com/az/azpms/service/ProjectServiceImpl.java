@@ -4,6 +4,7 @@ package com.az.azpms.service;
 import com.az.azpms.domain.dto.ProjectDTO;
 import com.az.azpms.domain.entities.Project;
 import com.az.azpms.domain.enums.ProjectStatus;
+import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzIllegalStatusChangeException;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
@@ -31,6 +32,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void createProject(ProjectDTO dto) {
+        projectRepository.findProjectByTitle(dto.getTitle()).ifPresent(
+                project -> {
+                    throw new AzAlreadyExistsException(AzErrorMessages.ENTITY_ALREADY_EXISTS.name());
+                }
+        );
+
         Project project = new Project();
         utils.initModelMapperStrict().map(dto, project);
         project.setStatus(ProjectStatus.OPEN);

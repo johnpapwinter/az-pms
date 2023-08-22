@@ -6,6 +6,7 @@ import com.az.azpms.domain.entities.Contractor;
 import com.az.azpms.domain.entities.Task;
 import com.az.azpms.domain.entities.TaskBid;
 import com.az.azpms.domain.enums.TaskBidStatus;
+import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzIllegalStatusChangeException;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
@@ -51,6 +52,12 @@ public class TaskBidServiceImpl implements TaskBidService {
         Contractor contractor = contractorRepository.findById(dto.getContractorId()).orElseThrow(
                 () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
         );
+        taskBidRepository.findTaskBidByTaskAndContractor(task, contractor).ifPresent(
+                taskBid -> {
+                    throw new AzAlreadyExistsException(AzErrorMessages.CONTRACTOR_HAS_ALREADY_PLACED_A_BID.name());
+                }
+        );
+
         TaskBid taskBid = new TaskBid();
         utils.initModelMapperStrict().map(dto, taskBid);
         taskBid.setStatus(TaskBidStatus.UNRESOLVED);

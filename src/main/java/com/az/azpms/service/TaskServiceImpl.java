@@ -6,6 +6,7 @@ import com.az.azpms.domain.entities.Project;
 import com.az.azpms.domain.entities.Task;
 import com.az.azpms.domain.entities.TaskBid;
 import com.az.azpms.domain.enums.TaskStatus;
+import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzIllegalStatusChangeException;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
@@ -38,6 +39,11 @@ public class TaskServiceImpl implements TaskService {
     public void createTask(TaskDTO dto) {
         Project project = projectRepository.findById(dto.getProjectId()).orElseThrow(
                 () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+        taskRepository.findTaskByTitleAndProject(dto.getTitle(), project).ifPresent(
+                task -> {
+                    throw new AzAlreadyExistsException(AzErrorMessages.ENTITY_ALREADY_EXISTS.name());
+                }
         );
 
         Task task = new Task();
