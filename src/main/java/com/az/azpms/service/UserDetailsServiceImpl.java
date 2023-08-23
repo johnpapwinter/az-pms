@@ -2,9 +2,12 @@ package com.az.azpms.service;
 
 import com.az.azpms.domain.entities.AzUser;
 import com.az.azpms.domain.entities.AzUserPrincipal;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -19,6 +22,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public AzUserPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
         AzUser user = userService.findUserByUsername(username);
 
-        return new AzUserPrincipal(user.getUsername(), user.getPassword());
+
+
+        return new AzUserPrincipal(user.getUsername(), user.getPassword(), null);
     }
 }

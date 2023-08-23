@@ -4,6 +4,7 @@ import com.az.azpms.domain.dto.AzUserDTO;
 import com.az.azpms.domain.dto.RegistrationDTO;
 import com.az.azpms.domain.entities.AzUser;
 import com.az.azpms.domain.enums.AzUserStatus;
+import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.AzUserRepository;
@@ -28,6 +29,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void createUser(RegistrationDTO dto) {
+        userRepository.findAzUserByUsername(dto.getUsername()).ifPresent(
+                azUser -> {
+                    throw new AzAlreadyExistsException(AzErrorMessages.ENTITY_ALREADY_EXISTS.name());
+                }
+        );
+
         AzUser user = new AzUser();
         utils.initModelMapperStrict().map(dto, user);
         user.setStatus(AzUserStatus.INACTIVE);

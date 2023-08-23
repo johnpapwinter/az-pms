@@ -16,13 +16,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody RegistrationDTO dto) {
-        userService.createUser(dto);
-
-        return ResponseEntity.ok().build();
-    }
-
     @PutMapping("/update")
     public ResponseEntity<Void> updateUser(@RequestBody AzUserDTO dto) {
         userService.updateUser(dto);
