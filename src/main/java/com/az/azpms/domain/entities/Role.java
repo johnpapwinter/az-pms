@@ -20,8 +20,11 @@ public class Role implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true)
     private String roleName;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active;
 
     @ManyToMany
     @JoinTable(
