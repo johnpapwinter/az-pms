@@ -2,10 +2,13 @@ package com.az.azpms.service;
 
 import com.az.azpms.domain.dto.RoleDTO;
 import com.az.azpms.domain.entities.AzUser;
+import com.az.azpms.domain.entities.Right;
 import com.az.azpms.domain.entities.Role;
+import com.az.azpms.domain.enums.RightName;
 import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
+import com.az.azpms.domain.repository.RightRepository;
 import com.az.azpms.domain.repository.RoleRepository;
 import com.az.azpms.utils.Utils;
 import org.springframework.data.domain.Page;
@@ -19,10 +22,14 @@ import java.util.List;
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
+    private final RightRepository rightRepository;
     private final Utils utils;
 
-    public RoleServiceImpl(RoleRepository roleRepository, Utils utils) {
+    public RoleServiceImpl(RoleRepository roleRepository,
+                           RightRepository rightRepository,
+                           Utils utils) {
         this.roleRepository = roleRepository;
+        this.rightRepository = rightRepository;
         this.utils = utils;
     }
 
@@ -71,12 +78,24 @@ public class RoleServiceImpl implements RoleService {
                 .map(this::toRoleDTO);
     }
 
+    @Override
+    @Transactional
+    public void assignRightsToRole(Long roleId, List<Long> rightIds) {
+        Role role = roleRepository.findById(roleId).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+        List<Right> rights = rightRepository.findAllByIdIn(rightIds);
+
+        role.getRights().clear();
+        role.setRights(rights);
+    }
+
     private RoleDTO toRoleDTO(Role role) {
         RoleDTO dto = new RoleDTO();
         utils.initModelMapperStrict().map(role, dto);
-        List<String> rights = role.getRights()
+        List<RightName> rights = role.getRights()
                 .stream()
-                .map(right -> String.valueOf(right.getName()))
+                .map(Right::getName)
                 .toList();
         dto.setRights(rights);
 

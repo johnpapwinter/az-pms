@@ -1,5 +1,6 @@
 package com.az.azpms.domain.dto;
 
+import com.az.azpms.domain.enums.RightName;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ public class RoleDTO {
     @NotNull
     private String roleName;
     private Boolean active;
-    private List<String> rights;
+    private List<RightName> rights;
     private List<String> users;
 
 }

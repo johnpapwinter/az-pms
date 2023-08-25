@@ -3,26 +3,33 @@ package com.az.azpms.service;
 import com.az.azpms.domain.dto.AzUserDTO;
 import com.az.azpms.domain.dto.RegistrationDTO;
 import com.az.azpms.domain.entities.AzUser;
+import com.az.azpms.domain.entities.Role;
 import com.az.azpms.domain.enums.AzUserStatus;
 import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.AzUserRepository;
+import com.az.azpms.domain.repository.RoleRepository;
 import com.az.azpms.utils.Utils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
     private final AzUserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final Utils utils;
 
     public UserServiceImpl(AzUserRepository userRepository,
+                           RoleRepository roleRepository,
                            Utils utils) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.utils = utils;
     }
 
@@ -88,6 +95,18 @@ public class UserServiceImpl implements UserService {
     public Page<AzUserDTO> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable)
                 .map(this::toUserDTO);
+    }
+
+    @Override
+    @Transactional
+    public void assignRolesToUser(Long userId, List<Long> roleIds) {
+        AzUser user = userRepository.findById(userId).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+        List<Role> roles = roleRepository.findAllByIdIn(roleIds);
+
+        user.getRoles().clear();
+        user.setRoles(roles);
     }
 
     private AzUserDTO toUserDTO(AzUser user) {

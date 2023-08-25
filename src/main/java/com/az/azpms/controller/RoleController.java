@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
@@ -44,5 +46,13 @@ public class RoleController {
         RoleDTO response = roleService.getRoleById(id);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/assign-rights/{id}")
+    public ResponseEntity<Void> assignRightsToRole(@PathVariable("id") Long roleId,
+                                                   @RequestBody List<Long> rightIds) {
+        roleService.assignRightsToRole(roleId, rightIds);
+
+        return ResponseEntity.ok().build();
     }
 }

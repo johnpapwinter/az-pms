@@ -6,6 +6,8 @@ import com.az.azpms.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -30,4 +32,11 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping("/assign-roles/{id}")
+    public ResponseEntity<Void> assignRolesToUser(@PathVariable("id") Long userId,
+                                                  @RequestBody List<Long> roleIds) {
+        userService.assignRolesToUser(userId, roleIds);
+
+        return ResponseEntity.ok().build();
+    }
 }
