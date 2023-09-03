@@ -4,6 +4,7 @@ import com.az.azpms.domain.dto.JwtResponseDTO;
 import com.az.azpms.domain.dto.LoginDTO;
 import com.az.azpms.domain.dto.RegistrationDTO;
 import com.az.azpms.domain.entities.AzUserPrincipal;
+import com.az.azpms.domain.enums.RightName;
 import com.az.azpms.security.JwtUtils;
 import com.az.azpms.service.UserService;
 import jakarta.validation.Valid;
@@ -59,9 +60,8 @@ public class AuthController {
         JwtResponseDTO responseDTO = new JwtResponseDTO();
         responseDTO.setToken(jwt);
         responseDTO.setUsername(userPrincipal.getUsername());
-        responseDTO.setRights(null);
-//        responseDTO.setRights(userPrincipal.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority).toList());
+        responseDTO.setRights(userPrincipal.getAuthorities().stream()
+                .map(grantedAuthority -> RightName.valueOf(grantedAuthority.getAuthority())).toList());
 
         return ResponseEntity.ok().body(responseDTO);
     }
