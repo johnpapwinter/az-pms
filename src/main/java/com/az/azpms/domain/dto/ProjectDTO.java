@@ -1,6 +1,7 @@
 package com.az.azpms.domain.dto;
 
 import com.az.azpms.domain.enums.ProjectStatus;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -11,16 +12,16 @@ import java.time.LocalDate;
 public class ProjectDTO {
 
     private Long id;
-    @NotNull
+    @NotBlank
     private String title;
     private ProjectStatus status;
     private String description;
     @NotNull
     @Positive
     private Double budget;
-    @NotNull
+    @NotBlank
     private String city;
-    @NotNull
+    @NotBlank
     private String country;
     private LocalDate startDate;
     private LocalDate endDate;

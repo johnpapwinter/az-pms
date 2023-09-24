@@ -1,27 +1,31 @@
 package com.az.azpms.domain.dto;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class RegistrationDTO {
 
-    @NotNull
+    @NotBlank
     private String username;
-    @NotNull
+    @NotBlank
     private String password;
-    @NotNull
+    @NotBlank
+    private String confirmPassword;
+    @NotBlank
     private String firstname;
-    @NotNull
+    @NotBlank
     private String lastname;
+    @NotBlank
     @Email
     private String email;
-    @NotNull
+    @NotBlank
     private String city;
-    @NotNull
+    @NotBlank
     private String address;
-    @NotNull
+    @NotBlank
     private String country;
 
 }

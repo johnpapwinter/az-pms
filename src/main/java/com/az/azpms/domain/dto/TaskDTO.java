@@ -1,6 +1,7 @@
 package com.az.azpms.domain.dto;
 
 import com.az.azpms.domain.enums.TaskStatus;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 public class TaskDTO {
 
     private Long id;
-    @NotNull
+    @NotBlank
     private String title;
     @NotNull
     private LocalDate bidDueDate;

@@ -1,5 +1,7 @@
 package com.az.azpms.domain.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -7,19 +9,20 @@ import lombok.Data;
 public class ContractorDTO {
 
     private Long id;
-    @NotNull
+    @NotBlank
     private String name;
     private String description;
-    @NotNull
+    @NotBlank
+    @Email
     private String email;
-    @NotNull
+    @NotBlank
     private String phone1;
     private String phone2;
-    @NotNull
+    @NotBlank
     private String address;
-    @NotNull
+    @NotBlank
     private String city;
-    @NotNull
+    @NotBlank
     private String country;
 
 }
