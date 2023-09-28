@@ -2,6 +2,7 @@ package com.az.azpms.domain.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,11 +49,21 @@ public class AzExceptionHandler {
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBadCredentials(BadCredentialsException e) {
+        ErrorResponseDTO responseDTO = new ErrorResponseDTO();
+        responseDTO.setErrorMessage(AzErrorMessages.BAD_CREDENTIALS.name());
+        responseDTO.setValidationErrors(new ArrayList<>());
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception e) {
         ErrorResponseDTO responseDTO = new ErrorResponseDTO();
         responseDTO.setErrorMessage(" There was an error. Please contact your administrator");
         responseDTO.setValidationErrors(new ArrayList<>());
+        e.printStackTrace();
 
         return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }

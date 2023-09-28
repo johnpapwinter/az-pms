@@ -41,6 +41,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@RequestBody @Valid RegistrationDTO dto) {
+        userService.matchPasswords(dto.getPassword(), dto.getConfirmPassword());
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         userService.createUser(dto);
 

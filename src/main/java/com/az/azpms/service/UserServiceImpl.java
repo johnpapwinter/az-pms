@@ -6,6 +6,7 @@ import com.az.azpms.domain.entities.AzUser;
 import com.az.azpms.domain.entities.Role;
 import com.az.azpms.domain.enums.AzUserStatus;
 import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
+import com.az.azpms.domain.exceptions.AzAuthException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.AzUserRepository;
@@ -107,6 +108,13 @@ public class UserServiceImpl implements UserService {
 
         user.getRoles().clear();
         user.setRoles(roles);
+    }
+
+    @Override
+    public void matchPasswords(String password, String passwordConfirmation) {
+        if (!password.equals(passwordConfirmation)) {
+            throw new AzAuthException(AzErrorMessages.PASSWORDS_DO_NOT_MATCH.name());
+        }
     }
 
     private AzUserDTO toUserDTO(AzUser user) {

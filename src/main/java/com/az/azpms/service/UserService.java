@@ -25,4 +25,6 @@ public interface UserService {
 
     void assignRolesToUser(Long userId, List<Long> roleIds);
 
+    void matchPasswords(String password, String passwordConfirmation);
+
 }
