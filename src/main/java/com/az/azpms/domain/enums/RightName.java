@@ -5,6 +5,7 @@ public enum RightName {
     READ,
     WRITE,
     DELETE,
-    CHANGE_STATUS
+    CHANGE_STATUS,
+    ADMIN
 
 }
