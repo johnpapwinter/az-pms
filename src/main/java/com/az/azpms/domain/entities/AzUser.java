@@ -49,7 +49,7 @@ public class AzUser implements Serializable {
     @Column(name = "user_status")
     private AzUserStatus status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "roles_per_user",
             joinColumns = @JoinColumn(name = "user_id"),
