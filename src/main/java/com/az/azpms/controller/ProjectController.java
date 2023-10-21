@@ -32,6 +32,14 @@ public class ProjectController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/get-by-company/{id}")
+    public ResponseEntity<Page<ProjectDTO>> getProjectsByCompany(@PathVariable("id") Long companyId,
+                                                                 Pageable pageable) {
+        Page<ProjectDTO> response = projectService.getProjectsOfCompany(companyId, pageable);
+
+        return ResponseEntity.ok().body(response);
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<Void> updateProject(@PathVariable("id") Long id, @RequestBody ProjectDTO dto) {
         projectService.updateProject(id, dto);

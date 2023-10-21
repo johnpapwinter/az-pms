@@ -11,6 +11,8 @@ public interface ProjectService {
 
     ProjectDTO getProjectById(Long id);
 
+    Page<ProjectDTO> getProjectsOfCompany(Long companyId, Pageable pageable);
+
     void updateProject(Long id, ProjectDTO dto);
 
     Page<ProjectDTO> getAllProjects(Pageable pageable);

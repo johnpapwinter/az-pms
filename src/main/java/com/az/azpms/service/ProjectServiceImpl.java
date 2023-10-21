@@ -58,6 +58,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public Page<ProjectDTO> getProjectsOfCompany(Long companyId, Pageable pageable) {
+        return projectRepository.findAllByCompanyId(companyId, pageable)
+                .map(this::toProjectDTO);
+    }
+
+    @Override
     @Transactional
     public void updateProject(Long id, ProjectDTO dto) {
         Project project = projectRepository.findById(id).orElseThrow(
