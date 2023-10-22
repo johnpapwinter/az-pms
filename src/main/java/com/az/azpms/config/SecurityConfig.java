@@ -34,10 +34,10 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/roles/**")
-                        .hasAuthority("ADMIN")
-                        .requestMatchers("/users/**")
-                        .hasAuthority("ADMIN")
+//                        .requestMatchers("/roles/**")
+//                        .hasAuthority("ADMIN")
+//                        .requestMatchers("/users/**")
+//                        .hasAuthority("ADMIN")
                         .anyRequest()
                         .permitAll())
                 .build();
