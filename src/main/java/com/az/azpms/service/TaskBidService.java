@@ -19,4 +19,6 @@ public interface TaskBidService {
 
     void changeTaskBidStatus(Long id, TaskBidStatus status);
 
+    Page<TaskBidDTO> getAllBidsByContractor(Long contractorId, Pageable pageable);
+
 }

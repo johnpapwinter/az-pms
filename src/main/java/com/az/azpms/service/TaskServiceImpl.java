@@ -13,6 +13,8 @@ import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.ProjectRepository;
 import com.az.azpms.domain.repository.TaskRepository;
 import com.az.azpms.utils.Utils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,6 +117,13 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.save(task);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TaskDTO> getAllTasksByContractor(Long contractorId, Pageable pageable) {
+        return taskRepository.findAllByContractorId(contractorId, pageable)
+                .map(this::toTaskDTO);
+    }
+
     private TaskDTO toTaskDTO(Task task) {
         TaskDTO dto = new TaskDTO();
         utils.initModelMapperStrict().map(task, dto);
@@ -134,11 +143,11 @@ public class TaskServiceImpl implements TaskService {
         }
 
         if (currentStatus.equals(TaskStatus.ASSIGNED) &&
-                !(nextStatus.equals(TaskStatus.ON_GOING) || nextStatus.equals(TaskStatus.DELETED))) {
+                !(nextStatus.equals(TaskStatus.ONGOING) || nextStatus.equals(TaskStatus.DELETED))) {
             throw new AzIllegalStatusChangeException(AzErrorMessages.TASK_STATUS_ILLEGAL_CHANGE.name());
         }
 
-        if (currentStatus.equals(TaskStatus.ON_GOING) &&
+        if (currentStatus.equals(TaskStatus.ONGOING) &&
                 !(nextStatus.equals(TaskStatus.COMPLETED) || nextStatus.equals(TaskStatus.DELETED))) {
             throw new AzIllegalStatusChangeException(AzErrorMessages.TASK_STATUS_ILLEGAL_CHANGE.name());
         }

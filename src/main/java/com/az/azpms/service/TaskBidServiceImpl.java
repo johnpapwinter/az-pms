@@ -124,6 +124,12 @@ public class TaskBidServiceImpl implements TaskBidService {
         taskBidRepository.save(taskBid);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TaskBidDTO> getAllBidsByContractor(Long contractorId, Pageable pageable) {
+        return taskBidRepository.findAllByContractorId(contractorId, pageable)
+                .map(this::toTaskBidDTO);
+    }
 
     private TaskBidDTO toTaskBidDTO(TaskBid taskBid) {
         TaskBidDTO dto = new TaskBidDTO();

@@ -55,4 +55,12 @@ public class TaskBidController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/get-by-contractor/{id}")
+    public ResponseEntity<Page<TaskBidDTO>> getBidsByContractor(@PathVariable("id") Long contractorId,
+                                                                Pageable pageable) {
+        Page<TaskBidDTO> response = taskBidService.getAllBidsByContractor(contractorId, pageable);
+
+        return ResponseEntity.ok().body(response);
+    }
+
 }

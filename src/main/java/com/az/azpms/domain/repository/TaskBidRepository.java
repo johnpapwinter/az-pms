@@ -20,4 +20,6 @@ public interface TaskBidRepository extends JpaRepository<TaskBid, Long> {
 
     Optional<TaskBid> findTaskBidByTaskAndContractor(Task task, Contractor contractor);
 
+    Page<TaskBid> findAllByContractorId(Long contractorId, Pageable pageable);
+
 }

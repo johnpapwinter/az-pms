@@ -3,6 +3,8 @@ package com.az.azpms.controller;
 import com.az.azpms.domain.dto.TaskDTO;
 import com.az.azpms.domain.enums.TaskStatus;
 import com.az.azpms.service.TaskService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +54,14 @@ public class TaskController {
         taskService.changeTaskStatus(id, status);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get-by-contractor/{id}")
+    public ResponseEntity<Page<TaskDTO>> getTasksByContractor(@PathVariable("id") Long contractorId,
+                                                              Pageable pageable) {
+        Page<TaskDTO> response = taskService.getAllTasksByContractor(contractorId, pageable);
+
+        return ResponseEntity.ok().body(response);
     }
 
 }
