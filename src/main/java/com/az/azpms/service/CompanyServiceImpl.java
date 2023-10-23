@@ -69,6 +69,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public Page<CompanyDTO> searchByParameters(SearchCompanyParamsDTO dto, Pageable pageable) {
         QCompany qCompany = QCompany.company;
         BooleanBuilder booleanBuilder = new BooleanBuilder();

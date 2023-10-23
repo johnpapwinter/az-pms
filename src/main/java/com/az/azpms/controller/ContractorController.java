@@ -1,6 +1,7 @@
 package com.az.azpms.controller;
 
 import com.az.azpms.domain.dto.ContractorDTO;
+import com.az.azpms.domain.dto.SearchContractorParamsDTO;
 import com.az.azpms.service.ContractorService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -16,13 +17,6 @@ public class ContractorController {
 
     public ContractorController(ContractorService contractorService) {
         this.contractorService = contractorService;
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<ContractorDTO>> getAllContractors(Pageable pageable) {
-        Page<ContractorDTO> response = contractorService.getAllContractors(pageable);
-
-        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping
@@ -42,6 +36,14 @@ public class ContractorController {
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<ContractorDTO> getContractorById(@PathVariable("id") Long id) {
         ContractorDTO response = contractorService.getContractorById(id);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<Page<ContractorDTO>> searchContractorsByParams(@RequestBody SearchContractorParamsDTO dto,
+                                                                         Pageable pageable) {
+        Page<ContractorDTO> response = contractorService.searchByParameters(dto, pageable);
 
         return ResponseEntity.ok().body(response);
     }
