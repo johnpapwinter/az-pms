@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface CompanyService {
 
-    Page<CompanyDTO> getAllCompanies(Pageable pageable);
-
     void createCompany(CompanyDTO dto);
 
     void updateCompany(CompanyDTO dto);

@@ -19,13 +19,6 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @GetMapping
-    public ResponseEntity<Page<CompanyDTO>> getAllCompanies(Pageable pageable) {
-        Page<CompanyDTO> response = companyService.getAllCompanies(pageable);
-
-        return ResponseEntity.ok().body(response);
-    }
-
     @PostMapping
     public ResponseEntity<Void> createCompany(@RequestBody @Valid CompanyDTO dto) {
         companyService.createCompany(dto);

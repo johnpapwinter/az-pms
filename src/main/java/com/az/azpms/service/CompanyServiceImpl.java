@@ -28,13 +28,6 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<CompanyDTO> getAllCompanies(Pageable pageable) {
-        return companyRepository.findAll(pageable)
-                .map(this::toCompanyDTO);
-    }
-
-    @Override
     @Transactional
     public void createCompany(CompanyDTO dto) {
         companyRepository.findCompanyByTitle(dto.getTitle()).ifPresent(
