@@ -1,6 +1,7 @@
 package com.az.azpms.controller;
 
 import com.az.azpms.domain.dto.ProjectDTO;
+import com.az.azpms.domain.dto.SearchProjectParamsDTO;
 import com.az.azpms.domain.enums.ProjectStatus;
 import com.az.azpms.service.ProjectService;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,14 @@ public class ProjectController {
     public ResponseEntity<Page<ProjectDTO>> getProjectsByCompany(@PathVariable("id") Long companyId,
                                                                  Pageable pageable) {
         Page<ProjectDTO> response = projectService.getProjectsOfCompany(companyId, pageable);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<Page<ProjectDTO>> searchByParameters(@RequestBody SearchProjectParamsDTO dto,
+                                                               Pageable pageable) {
+        Page<ProjectDTO> response = projectService.getAllProjects(pageable);
 
         return ResponseEntity.ok().body(response);
     }
