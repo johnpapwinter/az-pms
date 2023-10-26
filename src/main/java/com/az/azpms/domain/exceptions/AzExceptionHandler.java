@@ -15,6 +15,7 @@ public class AzExceptionHandler {
     @ExceptionHandler(AzIllegalStatusChangeException.class)
     public ResponseEntity<ErrorResponseDTO> handleIllegalStatusChange(AzIllegalStatusChangeException e) {
         ErrorResponseDTO responseDTO = new ErrorResponseDTO(e.getMessage(), new ArrayList<>());
+        e.printStackTrace();
 
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
@@ -22,6 +23,7 @@ public class AzExceptionHandler {
     @ExceptionHandler(AzNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleNotFoundException(AzNotFoundException e) {
         ErrorResponseDTO responseDTO = new ErrorResponseDTO(e.getMessage(), new ArrayList<>());
+        e.printStackTrace();
 
         return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
     }
@@ -29,6 +31,7 @@ public class AzExceptionHandler {
     @ExceptionHandler(AzAlreadyExistsException.class)
     public ResponseEntity<ErrorResponseDTO> handleAlreadyFoundException(AzAlreadyExistsException e) {
         ErrorResponseDTO responseDTO = new ErrorResponseDTO(e.getMessage(), new ArrayList<>());
+        e.printStackTrace();
 
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
@@ -45,6 +48,7 @@ public class AzExceptionHandler {
                         fieldError.getField(),
                         fieldError.getDefaultMessage()
                 )));
+        e.printStackTrace();
 
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
@@ -54,6 +58,7 @@ public class AzExceptionHandler {
         ErrorResponseDTO responseDTO = new ErrorResponseDTO();
         responseDTO.setErrorMessage(AzErrorMessages.BAD_CREDENTIALS.name());
         responseDTO.setValidationErrors(new ArrayList<>());
+        e.printStackTrace();
 
         return new ResponseEntity<>(responseDTO, HttpStatus.UNAUTHORIZED);
     }

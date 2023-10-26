@@ -44,7 +44,7 @@ public class ProjectController {
     @PostMapping("/search")
     public ResponseEntity<Page<ProjectDTO>> searchByParameters(@RequestBody SearchProjectParamsDTO dto,
                                                                Pageable pageable) {
-        Page<ProjectDTO> response = projectService.getAllProjects(pageable);
+        Page<ProjectDTO> response = projectService.searchByParameters(dto, pageable);
 
         return ResponseEntity.ok().body(response);
     }

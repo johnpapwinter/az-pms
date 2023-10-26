@@ -2,7 +2,10 @@ package com.az.azpms.service;
 
 
 import com.az.azpms.domain.dto.ProjectDTO;
+import com.az.azpms.domain.dto.SearchProjectParamsDTO;
+import com.az.azpms.domain.dto.TaskDTO;
 import com.az.azpms.domain.entities.Project;
+import com.az.azpms.domain.entities.QProject;
 import com.az.azpms.domain.enums.ProjectStatus;
 import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
@@ -10,12 +13,14 @@ import com.az.azpms.domain.exceptions.AzIllegalStatusChangeException;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.ProjectRepository;
 import com.az.azpms.utils.Utils;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -88,6 +93,48 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<ProjectDTO> searchByParameters(SearchProjectParamsDTO dto, Pageable pageable) {
+        QProject qProject = QProject.project;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (dto.getTitle() != null) {
+            booleanBuilder.and(qProject.title.containsIgnoreCase(dto.getTitle()));
+        }
+
+        if (dto.getStatus() != null) {
+            booleanBuilder.and(qProject.status.eq(dto.getStatus()));
+        }
+
+        if (dto.getBudget() != null) {
+            booleanBuilder.and(qProject.budget.eq(dto.getBudget()));
+        }
+
+        if (dto.getCity() != null) {
+            booleanBuilder.and(qProject.city.containsIgnoreCase(dto.getCity()));
+        }
+
+        if (dto.getCountry() != null) {
+            booleanBuilder.and(qProject.country.containsIgnoreCase(dto.getCountry()));
+        }
+
+        if (dto.getStartDate() != null) {
+            booleanBuilder.and(qProject.startDate.eq(dto.getStartDate()));
+        }
+
+        if (dto.getEndDate() != null) {
+            booleanBuilder.and(qProject.endDate.eq(dto.getEndDate()));
+        }
+
+        if (dto.getDueDate() != null) {
+            booleanBuilder.and(qProject.dueDate.eq(dto.getDueDate()));
+        }
+
+        return projectRepository.findAll(booleanBuilder, pageable)
+                .map(this::toProjectDTO);
+    }
+
+    @Override
     @Transactional
     public void changeProjectStatus(Long id, ProjectStatus status) {
         Project project = projectRepository.findById(id).orElseThrow(
@@ -102,6 +149,10 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectDTO toProjectDTO(Project project) {
         ProjectDTO dto = new ProjectDTO();
         utils.initModelMapperStrict().map(project, dto);
+        List<TaskDTO> taskDTOList = project.getTasks()
+                .stream().map(task -> utils.initModelMapperStrict().map(task, TaskDTO.class))
+                .toList();
+        dto.setTasks(taskDTOList);
 
         return dto;
     }
