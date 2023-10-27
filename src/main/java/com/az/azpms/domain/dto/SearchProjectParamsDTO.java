@@ -10,11 +10,15 @@ public class SearchProjectParamsDTO {
 
     private String title;
     private ProjectStatus status;
-    private Double budget;
+    private Double budgetFrom;
+    private Double budgetTo;
     private String city;
     private String country;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalDate dueDate;
+    private LocalDate startDateFrom;
+    private LocalDate startDateTo;
+    private LocalDate endDateFrom;
+    private LocalDate endDateTo;
+    private LocalDate dueDateFrom;
+    private LocalDate dueDateTo;
 
 }

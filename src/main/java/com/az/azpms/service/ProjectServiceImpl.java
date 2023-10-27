@@ -106,8 +106,12 @@ public class ProjectServiceImpl implements ProjectService {
             booleanBuilder.and(qProject.status.eq(dto.getStatus()));
         }
 
-        if (dto.getBudget() != null) {
-            booleanBuilder.and(qProject.budget.eq(dto.getBudget()));
+        if (dto.getBudgetFrom() != null && dto.getBudgetTo() != null) {
+            booleanBuilder.and(qProject.budget.between(dto.getBudgetFrom(), dto.getBudgetTo()));
+        } else if (dto.getBudgetFrom() != null) {
+            booleanBuilder.and(qProject.budget.goe(dto.getBudgetFrom()));
+        } else if (dto.getBudgetTo() != null) {
+            booleanBuilder.and(qProject.budget.loe(dto.getBudgetTo()));
         }
 
         if (dto.getCity() != null) {
@@ -118,16 +122,28 @@ public class ProjectServiceImpl implements ProjectService {
             booleanBuilder.and(qProject.country.containsIgnoreCase(dto.getCountry()));
         }
 
-        if (dto.getStartDate() != null) {
-            booleanBuilder.and(qProject.startDate.eq(dto.getStartDate()));
+        if (dto.getStartDateFrom() != null && dto.getStartDateTo() != null) {
+            booleanBuilder.and(qProject.startDate.between(dto.getStartDateFrom(), dto.getStartDateTo()));
+        } else if (dto.getStartDateFrom() != null) {
+            booleanBuilder.and(qProject.startDate.goe(dto.getStartDateFrom()));
+        } else if (dto.getStartDateTo() != null) {
+            booleanBuilder.and(qProject.startDate.loe(dto.getStartDateTo()));
         }
 
-        if (dto.getEndDate() != null) {
-            booleanBuilder.and(qProject.endDate.eq(dto.getEndDate()));
+        if (dto.getEndDateFrom() != null && dto.getEndDateTo() != null) {
+            booleanBuilder.and(qProject.endDate.between(dto.getEndDateFrom(), dto.getEndDateTo()));
+        } else if (dto.getEndDateFrom() != null) {
+            booleanBuilder.and(qProject.endDate.goe(dto.getEndDateFrom()));
+        } else if (dto.getEndDateTo() != null) {
+            booleanBuilder.and(qProject.endDate.loe(dto.getEndDateTo()));
         }
 
-        if (dto.getDueDate() != null) {
-            booleanBuilder.and(qProject.dueDate.eq(dto.getDueDate()));
+        if (dto.getDueDateFrom() != null && dto.getDueDateTo() != null) {
+            booleanBuilder.and(qProject.dueDate.between(dto.getDueDateFrom(), dto.getDueDateTo()));
+        } else if (dto.getDueDateFrom() != null) {
+            booleanBuilder.and(qProject.dueDate.goe(dto.getDueDateFrom()));
+        } else if (dto.getDueDateTo() != null) {
+            booleanBuilder.and(qProject.dueDate.loe(dto.getDueDateTo()));
         }
 
         return projectRepository.findAll(booleanBuilder, pageable)
