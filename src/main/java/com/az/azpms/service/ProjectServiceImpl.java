@@ -1,9 +1,11 @@
 package com.az.azpms.service;
 
 
+import com.az.azpms.domain.dto.CompanyDTO;
 import com.az.azpms.domain.dto.ProjectDTO;
 import com.az.azpms.domain.dto.SearchProjectParamsDTO;
 import com.az.azpms.domain.dto.TaskDTO;
+import com.az.azpms.domain.entities.Company;
 import com.az.azpms.domain.entities.Project;
 import com.az.azpms.domain.entities.QProject;
 import com.az.azpms.domain.enums.ProjectStatus;
@@ -11,6 +13,7 @@ import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzIllegalStatusChangeException;
 import com.az.azpms.domain.exceptions.AzNotFoundException;
+import com.az.azpms.domain.repository.CompanyRepository;
 import com.az.azpms.domain.repository.ProjectRepository;
 import com.az.azpms.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
@@ -26,11 +29,14 @@ import java.util.List;
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final CompanyRepository companyRepository;
     private final Utils utils;
 
     public ProjectServiceImpl(ProjectRepository projectRepository,
+                              CompanyRepository companyRepository,
                               Utils utils) {
         this.projectRepository = projectRepository;
+        this.companyRepository = companyRepository;
         this.utils = utils;
     }
 
@@ -42,12 +48,17 @@ public class ProjectServiceImpl implements ProjectService {
                     throw new AzAlreadyExistsException(AzErrorMessages.ENTITY_ALREADY_EXISTS.name());
                 }
         );
+        Company company = companyRepository.findById(dto.getCompany().getId()).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
 
         Project project = new Project();
         utils.initModelMapperStrict().map(dto, project);
         project.setStatus(ProjectStatus.OPEN);
         project.setCreationDate(LocalDateTime.now());
         project.setLastModificationDate(LocalDateTime.now());
+        project.setCompany(company);
+        company.getProjects().add(project);
 
         projectRepository.save(project);
     }
@@ -165,6 +176,7 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectDTO toProjectDTO(Project project) {
         ProjectDTO dto = new ProjectDTO();
         utils.initModelMapperStrict().map(project, dto);
+        dto.setCompany(utils.initModelMapperStrict().map(project.getCompany(), CompanyDTO.class));
         List<TaskDTO> taskDTOList = project.getTasks()
                 .stream().map(task -> utils.initModelMapperStrict().map(task, TaskDTO.class))
                 .toList();

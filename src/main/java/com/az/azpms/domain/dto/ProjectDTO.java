@@ -28,6 +28,7 @@ public class ProjectDTO {
     private LocalDate endDate;
     @NotNull
     private LocalDate dueDate;
+    private CompanyDTO company;
     private List<TaskDTO> tasks;
 
 }
