@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -176,7 +177,9 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectDTO toProjectDTO(Project project) {
         ProjectDTO dto = new ProjectDTO();
         utils.initModelMapperStrict().map(project, dto);
-        dto.setCompany(utils.initModelMapperStrict().map(project.getCompany(), CompanyDTO.class));
+        Optional.ofNullable(project.getCompany()).ifPresent(temp -> {
+            dto.setCompany(utils.initModelMapperStrict().map(project.getCompany(), CompanyDTO.class));
+        });
         List<TaskDTO> taskDTOList = project.getTasks()
                 .stream().map(task -> utils.initModelMapperStrict().map(task, TaskDTO.class))
                 .toList();
