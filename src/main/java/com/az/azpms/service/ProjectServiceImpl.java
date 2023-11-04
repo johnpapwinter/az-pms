@@ -8,7 +8,9 @@ import com.az.azpms.domain.dto.TaskDTO;
 import com.az.azpms.domain.entities.Company;
 import com.az.azpms.domain.entities.Project;
 import com.az.azpms.domain.entities.QProject;
+import com.az.azpms.domain.entities.Task;
 import com.az.azpms.domain.enums.ProjectStatus;
+import com.az.azpms.domain.enums.TaskStatus;
 import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
 import com.az.azpms.domain.exceptions.AzIllegalStatusChangeException;
@@ -60,6 +62,16 @@ public class ProjectServiceImpl implements ProjectService {
         project.setLastModificationDate(LocalDateTime.now());
         project.setCompany(company);
         company.getProjects().add(project);
+
+        dto.getTasks().forEach(taskDTO -> {
+            Task task = new Task();
+            utils.initModelMapperStrict().map(taskDTO, task);
+            task.setStatus(TaskStatus.OPEN);
+            task.setProject(project);
+            task.setCreationDate(LocalDateTime.now());
+            task.setLastModificationDate(LocalDateTime.now());
+            project.getTasks().add(task);
+        });
 
         projectRepository.save(project);
     }
