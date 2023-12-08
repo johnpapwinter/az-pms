@@ -14,8 +14,6 @@ public class SearchTaskParamsDTO {
     private TaskStatus status;
     private LocalDate startDateFrom;
     private LocalDate startDateTo;
-    private LocalDate endDateFrom;
-    private LocalDate endDateTo;
     private LocalDate dueDateFrom;
     private LocalDate dueDateTo;
     private Double costFrom;

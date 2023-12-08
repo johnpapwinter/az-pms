@@ -158,14 +158,6 @@ public class TaskServiceImpl implements TaskService {
             booleanBuilder.and(qTask.startDate.loe(dto.getStartDateTo()));
         }
 
-        if (dto.getEndDateFrom() != null && dto.getEndDateTo() != null) {
-            booleanBuilder.and(qTask.endDate.between(dto.getEndDateFrom(), dto.getEndDateTo()));
-        } else if (dto.getEndDateFrom() != null) {
-            booleanBuilder.and(qTask.endDate.goe(dto.getEndDateFrom()));
-        } else if (dto.getEndDateTo() != null) {
-            booleanBuilder.and(qTask.endDate.loe(dto.getEndDateTo()));
-        }
-
         if (dto.getDueDateFrom() != null && dto.getDueDateTo() != null) {
             booleanBuilder.and(qTask.dueDate.between(dto.getDueDateFrom(), dto.getDueDateTo()));
         } else if (dto.getDueDateFrom() != null) {
