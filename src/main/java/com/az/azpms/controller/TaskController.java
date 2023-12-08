@@ -1,5 +1,6 @@
 package com.az.azpms.controller;
 
+import com.az.azpms.domain.dto.SearchTaskParamsDTO;
 import com.az.azpms.domain.dto.TaskDTO;
 import com.az.azpms.domain.enums.TaskStatus;
 import com.az.azpms.service.TaskService;
@@ -60,6 +61,14 @@ public class TaskController {
     public ResponseEntity<Page<TaskDTO>> getTasksByContractor(@PathVariable("id") Long contractorId,
                                                               Pageable pageable) {
         Page<TaskDTO> response = taskService.getAllTasksByContractor(contractorId, pageable);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<Page<TaskDTO>> search(@RequestBody SearchTaskParamsDTO dto,
+                                                Pageable pageable) {
+        Page<TaskDTO> response = taskService.search(dto, pageable);
 
         return ResponseEntity.ok().body(response);
     }

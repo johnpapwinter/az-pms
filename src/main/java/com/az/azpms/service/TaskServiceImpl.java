@@ -1,8 +1,10 @@
 package com.az.azpms.service;
 
 
+import com.az.azpms.domain.dto.SearchTaskParamsDTO;
 import com.az.azpms.domain.dto.TaskDTO;
 import com.az.azpms.domain.entities.Project;
+import com.az.azpms.domain.entities.QTask;
 import com.az.azpms.domain.entities.Task;
 import com.az.azpms.domain.entities.TaskBid;
 import com.az.azpms.domain.enums.TaskStatus;
@@ -13,11 +15,13 @@ import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.ProjectRepository;
 import com.az.azpms.domain.repository.TaskRepository;
 import com.az.azpms.utils.Utils;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -123,6 +127,66 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.findAllByContractorId(contractorId, pageable)
                 .map(this::toTaskDTO);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TaskDTO> search(SearchTaskParamsDTO dto, Pageable pageable) {
+        QTask qTask = QTask.task;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (dto.getTitle() != null) {
+            booleanBuilder.and(qTask.title.containsIgnoreCase(dto.getTitle()));
+        }
+
+        if (dto.getBidDueDateFrom() != null && dto.getBidDueDateTo() != null) {
+            booleanBuilder.and(qTask.bidDueDate.between(dto.getBidDueDateFrom(), dto.getBidDueDateTo()));
+        } else if (dto.getBidDueDateFrom() != null) {
+            booleanBuilder.and(qTask.bidDueDate.goe(dto.getBidDueDateFrom()));
+        } else if (dto.getBidDueDateTo() != null) {
+            booleanBuilder.and(qTask.bidDueDate.loe(dto.getBidDueDateTo()));
+        }
+
+        if (dto.getStatus() != null) {
+            booleanBuilder.and(qTask.status.eq(dto.getStatus()));
+        }
+
+        if (dto.getStartDateFrom() != null && dto.getStartDateTo() != null) {
+            booleanBuilder.and(qTask.startDate.between(dto.getStartDateFrom(), dto.getStartDateTo()));
+        } else if (dto.getStartDateFrom() != null) {
+            booleanBuilder.and(qTask.startDate.goe(dto.getStartDateFrom()));
+        } else if (dto.getStartDateTo() != null) {
+            booleanBuilder.and(qTask.startDate.loe(dto.getStartDateTo()));
+        }
+
+        if (dto.getEndDateFrom() != null && dto.getEndDateTo() != null) {
+            booleanBuilder.and(qTask.endDate.between(dto.getEndDateFrom(), dto.getEndDateTo()));
+        } else if (dto.getEndDateFrom() != null) {
+            booleanBuilder.and(qTask.endDate.goe(dto.getEndDateFrom()));
+        } else if (dto.getEndDateTo() != null) {
+            booleanBuilder.and(qTask.endDate.loe(dto.getEndDateTo()));
+        }
+
+        if (dto.getDueDateFrom() != null && dto.getDueDateTo() != null) {
+            booleanBuilder.and(qTask.dueDate.between(dto.getDueDateFrom(), dto.getDueDateTo()));
+        } else if (dto.getDueDateFrom() != null) {
+            booleanBuilder.and(qTask.dueDate.goe(dto.getDueDateFrom()));
+        } else if (dto.getDueDateTo() != null) {
+            booleanBuilder.and(qTask.dueDate.loe(dto.getDueDateTo()));
+        }
+
+        if (dto.getCostFrom() != null && dto.getCostTo() != null) {
+            booleanBuilder.and(qTask.cost.between(dto.getCostFrom(), dto.getCostTo()));
+        } else if (dto.getCostFrom() != null) {
+            booleanBuilder.and(qTask.cost.goe(dto.getCostFrom()));
+        } else if (dto.getCostTo() != null) {
+            booleanBuilder.and(qTask.cost.loe(dto.getCostTo()));
+        }
+
+
+        return taskRepository.findAll(booleanBuilder, pageable)
+                .map(this::toTaskDTO);
+    }
+
 
     private TaskDTO toTaskDTO(Task task) {
         TaskDTO dto = new TaskDTO();

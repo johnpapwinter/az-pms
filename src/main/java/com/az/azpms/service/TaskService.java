@@ -1,5 +1,6 @@
 package com.az.azpms.service;
 
+import com.az.azpms.domain.dto.SearchTaskParamsDTO;
 import com.az.azpms.domain.dto.TaskDTO;
 import com.az.azpms.domain.entities.Task;
 import com.az.azpms.domain.entities.TaskBid;
@@ -24,5 +25,7 @@ public interface TaskService {
     void assignTask(Task task, TaskBid bid);
 
     Page<TaskDTO> getAllTasksByContractor(Long contractorId, Pageable pageable);
+
+    Page<TaskDTO> search(SearchTaskParamsDTO dto, Pageable pageable);
 
 }
