@@ -1,8 +1,10 @@
 package com.az.azpms.service;
 
 
+import com.az.azpms.domain.dto.SearchBidParamsDTO;
 import com.az.azpms.domain.dto.TaskBidDTO;
 import com.az.azpms.domain.entities.Contractor;
+import com.az.azpms.domain.entities.QTaskBid;
 import com.az.azpms.domain.entities.Task;
 import com.az.azpms.domain.entities.TaskBid;
 import com.az.azpms.domain.enums.TaskBidStatus;
@@ -14,6 +16,7 @@ import com.az.azpms.domain.repository.ContractorRepository;
 import com.az.azpms.domain.repository.TaskBidRepository;
 import com.az.azpms.domain.repository.TaskRepository;
 import com.az.azpms.utils.Utils;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -128,6 +131,36 @@ public class TaskBidServiceImpl implements TaskBidService {
     @Transactional(readOnly = true)
     public Page<TaskBidDTO> getAllBidsByContractor(Long contractorId, Pageable pageable) {
         return taskBidRepository.findAllByContractorId(contractorId, pageable)
+                .map(this::toTaskBidDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TaskBidDTO> search(SearchBidParamsDTO dto, Pageable pageable) {
+        QTaskBid qTaskBid = QTaskBid.taskBid;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (dto.getOfferFrom() != null && dto.getOfferTo() != null) {
+            booleanBuilder.and(qTaskBid.offer.between(dto.getOfferFrom(), dto.getOfferTo()));
+        } else if (dto.getOfferFrom() != null) {
+            booleanBuilder.and(qTaskBid.offer.goe(dto.getOfferFrom()));
+        } else if (dto.getOfferTo() != null) {
+            booleanBuilder.and(qTaskBid.offer.loe(dto.getOfferTo()));
+        }
+
+        if (dto.getStatus() != null) {
+            booleanBuilder.and(qTaskBid.status.eq(dto.getStatus()));
+        }
+
+        if (dto.getTaskId() != null) {
+            booleanBuilder.and(qTaskBid.task.id.eq(dto.getTaskId()));
+        }
+
+        if (dto.getContractorId() != null) {
+            booleanBuilder.and(qTaskBid.contractor.id.eq(dto.getContractorId()));
+        }
+
+        return taskBidRepository.findAll(booleanBuilder, pageable)
                 .map(this::toTaskBidDTO);
     }
 

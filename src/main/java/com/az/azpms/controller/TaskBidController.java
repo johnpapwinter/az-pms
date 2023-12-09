@@ -1,5 +1,6 @@
 package com.az.azpms.controller;
 
+import com.az.azpms.domain.dto.SearchBidParamsDTO;
 import com.az.azpms.domain.dto.TaskBidDTO;
 import com.az.azpms.domain.enums.TaskBidStatus;
 import com.az.azpms.service.TaskBidService;
@@ -59,6 +60,14 @@ public class TaskBidController {
     public ResponseEntity<Page<TaskBidDTO>> getBidsByContractor(@PathVariable("id") Long contractorId,
                                                                 Pageable pageable) {
         Page<TaskBidDTO> response = taskBidService.getAllBidsByContractor(contractorId, pageable);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<Page<TaskBidDTO>> search(@RequestBody SearchBidParamsDTO dto,
+                                                   Pageable pageable) {
+        Page<TaskBidDTO> response = taskBidService.search(dto, pageable);
 
         return ResponseEntity.ok().body(response);
     }
