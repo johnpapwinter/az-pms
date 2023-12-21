@@ -117,6 +117,7 @@ public class TaskServiceImpl implements TaskService {
 
         task.setCost(bid.getOffer());
         task.setContractor(bid.getContractor());
+        task.setStatus(TaskStatus.ASSIGNED);
 
         taskRepository.save(task);
     }
