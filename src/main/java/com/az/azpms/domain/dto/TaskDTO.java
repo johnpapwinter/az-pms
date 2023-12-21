@@ -26,5 +26,6 @@ public class TaskDTO {
     private Double cost;
     @NotNull
     private Long projectId;
+    private ContractorDTO contractorDTO;
 
 }

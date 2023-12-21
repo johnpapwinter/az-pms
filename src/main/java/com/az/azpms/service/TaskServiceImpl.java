@@ -1,6 +1,7 @@
 package com.az.azpms.service;
 
 
+import com.az.azpms.domain.dto.ContractorDTO;
 import com.az.azpms.domain.dto.SearchTaskParamsDTO;
 import com.az.azpms.domain.dto.TaskDTO;
 import com.az.azpms.domain.entities.Project;
@@ -185,6 +186,11 @@ public class TaskServiceImpl implements TaskService {
         TaskDTO dto = new TaskDTO();
         utils.initModelMapperStrict().map(task, dto);
         dto.setProjectId(task.getProject().getId());
+        if (task.getContractor() != null) {
+            ContractorDTO contractorDTO = new ContractorDTO();
+            utils.initModelMapperStrict().map(task.getContractor(), contractorDTO);
+            dto.setContractorDTO(contractorDTO);
+        }
 
         return dto;
     }
