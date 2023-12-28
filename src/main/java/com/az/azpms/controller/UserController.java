@@ -2,7 +2,10 @@ package com.az.azpms.controller;
 
 import com.az.azpms.domain.dto.AzUserDTO;
 import com.az.azpms.domain.dto.RegistrationDTO;
+import com.az.azpms.domain.dto.SearchAzUserParamsDTO;
 import com.az.azpms.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,4 +42,13 @@ public class UserController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/search")
+    public ResponseEntity<Page<AzUserDTO>> searchUsersByParams(@RequestBody SearchAzUserParamsDTO dto,
+                                                               Pageable pageable) {
+        Page<AzUserDTO> response = userService.searchUsers(dto, pageable);
+
+        return ResponseEntity.ok().body(response);
+    }
+
 }

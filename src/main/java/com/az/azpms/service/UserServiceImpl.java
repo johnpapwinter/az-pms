@@ -2,7 +2,9 @@ package com.az.azpms.service;
 
 import com.az.azpms.domain.dto.AzUserDTO;
 import com.az.azpms.domain.dto.RegistrationDTO;
+import com.az.azpms.domain.dto.SearchAzUserParamsDTO;
 import com.az.azpms.domain.entities.AzUser;
+import com.az.azpms.domain.entities.QAzUser;
 import com.az.azpms.domain.entities.Role;
 import com.az.azpms.domain.enums.AzUserStatus;
 import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
@@ -12,6 +14,7 @@ import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.AzUserRepository;
 import com.az.azpms.domain.repository.RoleRepository;
 import com.az.azpms.utils.Utils;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -115,6 +118,48 @@ public class UserServiceImpl implements UserService {
         if (!password.equals(passwordConfirmation)) {
             throw new AzAuthException(AzErrorMessages.PASSWORDS_DO_NOT_MATCH.name());
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AzUserDTO> searchUsers(SearchAzUserParamsDTO dto, Pageable pageable) {
+        QAzUser qAzUser = QAzUser.azUser;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (dto.getUsername() != null) {
+            booleanBuilder.and(qAzUser.username.containsIgnoreCase(dto.getUsername()));
+        }
+
+        if (dto.getFirstname() != null) {
+            booleanBuilder.and(qAzUser.firstname.containsIgnoreCase(dto.getFirstname()));
+        }
+
+        if (dto.getLastname() != null) {
+            booleanBuilder.and(qAzUser.lastname.containsIgnoreCase(dto.getLastname()));
+        }
+
+        if (dto.getEmail() != null) {
+            booleanBuilder.and(qAzUser.email.containsIgnoreCase(dto.getEmail()));
+        }
+
+        if (dto.getCity() != null) {
+            booleanBuilder.and(qAzUser.city.containsIgnoreCase(dto.getCity()));
+        }
+
+        if (dto.getAddress() != null) {
+            booleanBuilder.and(qAzUser.address.containsIgnoreCase(dto.getAddress()));
+        }
+
+        if (dto.getCountry() != null) {
+            booleanBuilder.and(qAzUser.country.containsIgnoreCase(dto.getCountry()));
+        }
+
+        if (dto.getStatus() != null) {
+            booleanBuilder.and(qAzUser.status.eq(dto.getStatus()));
+        }
+
+        return userRepository.findAll(booleanBuilder, pageable)
+                .map(this::toUserDTO);
     }
 
     private AzUserDTO toUserDTO(AzUser user) {
