@@ -3,6 +3,8 @@ package com.az.azpms.domain.dto;
 import com.az.azpms.domain.enums.AzUserStatus;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AzUserDTO {
 
@@ -15,5 +17,6 @@ public class AzUserDTO {
     private String address;
     private String country;
     private AzUserStatus status;
+    private List<RoleDTO> roles;
 
 }

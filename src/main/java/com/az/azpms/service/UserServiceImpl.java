@@ -2,11 +2,14 @@ package com.az.azpms.service;
 
 import com.az.azpms.domain.dto.AzUserDTO;
 import com.az.azpms.domain.dto.RegistrationDTO;
+import com.az.azpms.domain.dto.RoleDTO;
 import com.az.azpms.domain.dto.SearchAzUserParamsDTO;
 import com.az.azpms.domain.entities.AzUser;
 import com.az.azpms.domain.entities.QAzUser;
+import com.az.azpms.domain.entities.Right;
 import com.az.azpms.domain.entities.Role;
 import com.az.azpms.domain.enums.AzUserStatus;
+import com.az.azpms.domain.enums.RightName;
 import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
 import com.az.azpms.domain.exceptions.AzAuthException;
 import com.az.azpms.domain.exceptions.AzErrorMessages;
@@ -165,6 +168,23 @@ public class UserServiceImpl implements UserService {
     private AzUserDTO toUserDTO(AzUser user) {
         AzUserDTO dto = new AzUserDTO();
         utils.initModelMapperStrict().map(user, dto);
+        List<RoleDTO> roleDTOList = user.getRoles()
+                .stream()
+                .map(this::toRoleDTO)
+                .toList();
+        dto.setRoles(roleDTOList);
+
+        return dto;
+    }
+
+    private RoleDTO toRoleDTO(Role role) {
+        RoleDTO dto = new RoleDTO();
+        utils.initModelMapperStrict().map(role, dto);
+        List<RightName> rights = role.getRights()
+                .stream()
+                .map(Right::getName)
+                .toList();
+        dto.setRights(rights);
 
         return dto;
     }
