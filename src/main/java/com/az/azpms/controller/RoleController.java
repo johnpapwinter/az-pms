@@ -1,6 +1,7 @@
 package com.az.azpms.controller;
 
 import com.az.azpms.domain.dto.RoleDTO;
+import com.az.azpms.domain.dto.SearchRoleParamsDTO;
 import com.az.azpms.service.RoleService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -55,4 +56,13 @@ public class RoleController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/search")
+    public ResponseEntity<Page<RoleDTO>> searchByParams(@RequestBody SearchRoleParamsDTO dto,
+                                                        Pageable pageable) {
+        Page<RoleDTO> response = roleService.searchByParams(dto, pageable);
+
+        return ResponseEntity.ok().body(response);
+    }
+
 }

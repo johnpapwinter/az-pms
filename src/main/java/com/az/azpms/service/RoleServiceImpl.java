@@ -1,7 +1,9 @@
 package com.az.azpms.service;
 
 import com.az.azpms.domain.dto.RoleDTO;
+import com.az.azpms.domain.dto.SearchRoleParamsDTO;
 import com.az.azpms.domain.entities.AzUser;
+import com.az.azpms.domain.entities.QRole;
 import com.az.azpms.domain.entities.Right;
 import com.az.azpms.domain.entities.Role;
 import com.az.azpms.domain.enums.RightName;
@@ -11,6 +13,7 @@ import com.az.azpms.domain.exceptions.AzNotFoundException;
 import com.az.azpms.domain.repository.RightRepository;
 import com.az.azpms.domain.repository.RoleRepository;
 import com.az.azpms.utils.Utils;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -88,6 +91,24 @@ public class RoleServiceImpl implements RoleService {
 
         role.getRights().clear();
         role.setRights(rights);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RoleDTO> searchByParams(SearchRoleParamsDTO dto, Pageable pageable) {
+        QRole qRole = QRole.role;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (dto.getRoleName() != null) {
+            booleanBuilder.and(qRole.roleName.containsIgnoreCase(dto.getRoleName()));
+        }
+
+        if (dto.getActive() != null) {
+            booleanBuilder.and(qRole.active.eq(dto.getActive()));
+        }
+
+        return roleRepository.findAll(booleanBuilder, pageable)
+                .map(this::toRoleDTO);
     }
 
     private RoleDTO toRoleDTO(Role role) {
