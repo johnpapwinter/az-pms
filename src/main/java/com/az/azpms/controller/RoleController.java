@@ -49,14 +49,6 @@ public class RoleController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/assign-rights/{id}")
-    public ResponseEntity<Void> assignRightsToRole(@PathVariable("id") Long roleId,
-                                                   @RequestBody List<Long> rightIds) {
-        roleService.assignRightsToRole(roleId, rightIds);
-
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/search")
     public ResponseEntity<Page<RoleDTO>> searchByParams(@RequestBody SearchRoleParamsDTO dto,
                                                         Pageable pageable) {

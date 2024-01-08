@@ -5,7 +5,6 @@ import com.az.azpms.domain.dto.SearchRoleParamsDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface RoleService {
 
@@ -16,8 +15,6 @@ public interface RoleService {
     void updateRole(RoleDTO dto);
 
     Page<RoleDTO> getAllRoles(Pageable pageable);
-
-    void assignRightsToRole(Long roleId, List<Long> rightIds);
 
     Page<RoleDTO> searchByParams(SearchRoleParamsDTO dto, Pageable pageable);
 

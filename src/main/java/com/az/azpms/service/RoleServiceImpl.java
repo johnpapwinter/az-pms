@@ -44,10 +44,14 @@ public class RoleServiceImpl implements RoleService {
                     throw new AzAlreadyExistsException(AzErrorMessages.ENTITY_ALREADY_EXISTS.name());
                 }
         );
+        List<Right> rights = rightRepository.findAllByNameIn(dto.getRights());
 
         Role role = new Role();
         utils.initModelMapperStrict().map(dto, role);
         role.setActive(true);
+
+        role.getRights().clear();
+        role.setRights(rights);
 
         roleRepository.save(role);
     }
@@ -68,8 +72,13 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findById(dto.getId()).orElseThrow(
                 () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
         );
+        List<Right> rights = rightRepository.findAllByNameIn(dto.getRights());
+
         role.setRoleName(dto.getRoleName());
         role.setActive(dto.getActive());
+
+        role.getRights().clear();
+        role.setRights(rights);
 
         roleRepository.save(role);
     }
@@ -79,18 +88,6 @@ public class RoleServiceImpl implements RoleService {
     public Page<RoleDTO> getAllRoles(Pageable pageable) {
         return roleRepository.findAll(pageable)
                 .map(this::toRoleDTO);
-    }
-
-    @Override
-    @Transactional
-    public void assignRightsToRole(Long roleId, List<Long> rightIds) {
-        Role role = roleRepository.findById(roleId).orElseThrow(
-                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
-        );
-        List<Right> rights = rightRepository.findAllByIdIn(rightIds);
-
-        role.getRights().clear();
-        role.setRights(rights);
     }
 
     @Override
