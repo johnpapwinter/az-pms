@@ -1,8 +1,6 @@
 package com.az.azpms.service;
 
-import com.az.azpms.domain.dto.AzUserDTO;
-import com.az.azpms.domain.dto.RegistrationDTO;
-import com.az.azpms.domain.dto.SearchAzUserParamsDTO;
+import com.az.azpms.domain.dto.*;
 import com.az.azpms.domain.entities.AzUser;
 import com.az.azpms.domain.enums.AzUserStatus;
 import org.springframework.data.domain.Page;
@@ -29,5 +27,9 @@ public interface UserService {
     void matchPasswords(String password, String passwordConfirmation);
 
     Page<AzUserDTO> searchUsers(SearchAzUserParamsDTO searchParamsDTO,  Pageable pageable);
+
+    AzUser generateResetPasswordToken(GenerateResetPasswordDTO dto);
+
+    AzUser resetPassword(ResetPasswordDTO dto);
 
 }

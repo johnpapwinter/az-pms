@@ -1,8 +1,6 @@
 package com.az.azpms.controller;
 
-import com.az.azpms.domain.dto.JwtResponseDTO;
-import com.az.azpms.domain.dto.LoginDTO;
-import com.az.azpms.domain.dto.RegistrationDTO;
+import com.az.azpms.domain.dto.*;
 import com.az.azpms.domain.entities.AzUserPrincipal;
 import com.az.azpms.domain.enums.RightName;
 import com.az.azpms.security.JwtUtils;
@@ -66,4 +64,20 @@ public class AuthController {
 
         return ResponseEntity.ok().body(responseDTO);
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> generatePasswordResetToken(@RequestBody GenerateResetPasswordDTO dto) {
+        userService.generateResetPasswordToken(dto);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordDTO dto) {
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userService.resetPassword(dto);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

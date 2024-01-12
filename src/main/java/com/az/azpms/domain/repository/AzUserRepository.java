@@ -12,4 +12,8 @@ public interface AzUserRepository extends JpaRepository<AzUser, Long>, QuerydslP
 
     Optional<AzUser> findAzUserByUsername(String username);
 
+    Optional<AzUser> findAzUserByEmail(String email);
+
+    Optional<AzUser> findAzUserByResetToken(String resetToken);
+
 }

@@ -1,9 +1,6 @@
 package com.az.azpms.service;
 
-import com.az.azpms.domain.dto.AzUserDTO;
-import com.az.azpms.domain.dto.RegistrationDTO;
-import com.az.azpms.domain.dto.RoleDTO;
-import com.az.azpms.domain.dto.SearchAzUserParamsDTO;
+import com.az.azpms.domain.dto.*;
 import com.az.azpms.domain.entities.AzUser;
 import com.az.azpms.domain.entities.QAzUser;
 import com.az.azpms.domain.entities.Right;
@@ -20,23 +17,28 @@ import com.az.azpms.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final AzUserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
     private final Utils utils;
 
     public UserServiceImpl(AzUserRepository userRepository,
                            RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder,
                            Utils utils) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
         this.utils = utils;
     }
 
@@ -163,6 +165,42 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findAll(booleanBuilder, pageable)
                 .map(this::toUserDTO);
+    }
+
+    @Override
+    @Transactional
+    public AzUser generateResetPasswordToken(GenerateResetPasswordDTO dto) {
+        AzUser azUser = userRepository.findAzUserByEmail(dto.getEmail()).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+        String resetPasswordToken = UUID.randomUUID().toString();
+
+        azUser.setResetToken(resetPasswordToken);
+        userRepository.save(azUser);
+
+        return azUser;
+    }
+
+    @Override
+    @Transactional
+    public AzUser resetPassword(ResetPasswordDTO dto) {
+        AzUser azUser = userRepository.findAzUserByResetToken(dto.getResetToken()).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+        comparePasswords(dto.getPassword(), dto.getPasswordConfirmation());
+
+        azUser.setPassword(dto.getPassword());
+        azUser.setResetToken(null);
+        userRepository.save(azUser);
+
+        return azUser;
+    }
+
+
+    private void comparePasswords(String password, String confirmationPassword) {
+        if (!passwordEncoder.matches(confirmationPassword, password)) {
+            throw new AzAuthException(AzErrorMessages.PASSWORDS_DO_NOT_MATCH.name());
+        }
     }
 
     private AzUserDTO toUserDTO(AzUser user) {

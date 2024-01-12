@@ -49,6 +49,9 @@ public class AzUser implements Serializable {
     @Column(name = "user_status")
     private AzUserStatus status;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "roles_per_user",
