@@ -1,10 +1,7 @@
 package com.az.azpms.service;
 
 import com.az.azpms.domain.dto.*;
-import com.az.azpms.domain.entities.AzUser;
-import com.az.azpms.domain.entities.QAzUser;
-import com.az.azpms.domain.entities.Right;
-import com.az.azpms.domain.entities.Role;
+import com.az.azpms.domain.entities.*;
 import com.az.azpms.domain.enums.AzUserStatus;
 import com.az.azpms.domain.enums.RightName;
 import com.az.azpms.domain.exceptions.AzAlreadyExistsException;
@@ -165,6 +162,19 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findAll(booleanBuilder, pageable)
                 .map(this::toUserDTO);
+    }
+
+    @Override
+    public void changePassword(AzUserPrincipal userPrincipal, ChangePasswordDTO dto) {
+        AzUser azUser = userRepository.findAzUserByUsername(userPrincipal.getUsername()).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+
+        comparePasswords(azUser.getPassword(), dto.getCurrentPassword());
+        dto.setNewPassword(passwordEncoder.encode(dto.getNewPassword()));
+
+        azUser.setPassword(dto.getNewPassword());
+        userRepository.save(azUser);
     }
 
     @Override
