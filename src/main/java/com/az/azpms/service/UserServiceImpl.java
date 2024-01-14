@@ -165,6 +165,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void changePassword(AzUserPrincipal userPrincipal, ChangePasswordDTO dto) {
         AzUser azUser = userRepository.findAzUserByUsername(userPrincipal.getUsername()).orElseThrow(
                 () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
