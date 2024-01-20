@@ -10,12 +10,18 @@ public class AzUserPrincipal implements UserDetails {
 
     private String username;
     private String password;
+    private Long id;
     public Collection<? extends GrantedAuthority> authorities;
 
-    public AzUserPrincipal(String username, String password, List<GrantedAuthority> authorities) {
+    public AzUserPrincipal(String username, String password, Long id, List<GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
+        this.id = id;
         this.authorities = authorities;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override

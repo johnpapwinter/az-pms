@@ -37,6 +37,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .map(rightName -> new SimpleGrantedAuthority(rightName.name()))
                 .collect(Collectors.toList());
 
-        return new AzUserPrincipal(user.getUsername(), user.getPassword(), authorities);
+        return new AzUserPrincipal(user.getUsername(), user.getPassword(), user.getId(), authorities);
     }
 }

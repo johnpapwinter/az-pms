@@ -57,6 +57,7 @@ public class AuthController {
         JwtResponseDTO responseDTO = new JwtResponseDTO();
         responseDTO.setToken(jwt);
         responseDTO.setUsername(userPrincipal.getUsername());
+        responseDTO.setId(userPrincipal.getId());
         responseDTO.setRights(userPrincipal.getAuthorities().stream()
                 .map(grantedAuthority -> RightName.valueOf(grantedAuthority.getAuthority())).toList());
 
