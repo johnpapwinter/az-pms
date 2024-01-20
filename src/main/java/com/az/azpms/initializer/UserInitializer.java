@@ -49,14 +49,6 @@ public class UserInitializer implements ApplicationListener<ContextRefreshedEven
             systemAdmin.setFirstname("SYSTEM");
             systemAdmin.setLastname("ADMIN");
 
-            Right right = new Right();
-            right.setName(RightName.ADMIN);
-
-            Role role = new Role();
-            role.setRoleName("SYSTEM_ADMIN");
-            role.getRights().add(right);
-
-            systemAdmin.getRoles().add(role);
 
             log.info("SAVED SYSTEM ADMIN USER");
             log.info(systemAdmin.toString());
