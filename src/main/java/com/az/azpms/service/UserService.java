@@ -35,4 +35,6 @@ public interface UserService {
 
     AzUser resetPassword(ResetPasswordDTO dto);
 
+    void toggleUserStatus(AzUserDTO dto);
+
 }

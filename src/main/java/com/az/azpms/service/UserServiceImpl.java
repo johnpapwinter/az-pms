@@ -207,6 +207,21 @@ public class UserServiceImpl implements UserService {
         return azUser;
     }
 
+    @Override
+    @Transactional
+    public void toggleUserStatus(AzUserDTO dto) {
+        AzUser user = userRepository.findById(dto.getId()).orElseThrow(
+                () -> new AzNotFoundException(AzErrorMessages.ENTITY_NOT_FOUND.name())
+        );
+
+        if (user.getStatus().equals(AzUserStatus.ACTIVE)) {
+            user.setStatus(AzUserStatus.INACTIVE);
+        } else {
+            user.setStatus(AzUserStatus.ACTIVE);
+        }
+
+        userRepository.save(user);
+    }
 
     private void comparePasswords(String password, String confirmationPassword) {
         if (!passwordEncoder.matches(confirmationPassword, password)) {

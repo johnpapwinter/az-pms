@@ -35,6 +35,14 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping("/toggle-status")
+    public ResponseEntity<Void> toggleUserStatus(@RequestBody AzUserDTO dto) {
+        userService.toggleUserStatus(dto);
+
+
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/assign-roles/{id}")
     public ResponseEntity<Void> assignRolesToUser(@PathVariable("id") Long userId,
                                                   @RequestBody List<Long> roleIds) {
